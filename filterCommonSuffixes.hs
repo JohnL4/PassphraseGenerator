@@ -1,6 +1,6 @@
 import Data.List
 
--- | Filter a word list, removing those words that are duplicates apart from common suffixes.  |
+-- | Filter a word list, removing those words that are duplicates apart from common suffixes.
 -- | Reads SORTED list on stdin, emits filtered list on stdout.
 main :: IO()
 main = do
