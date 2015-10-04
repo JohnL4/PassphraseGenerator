@@ -1,17 +1,38 @@
+{-
+So, what we REALLY want to do is: recognize clumps of prefixed words, and within said clump, remove
+those words that only add a standard suffix to the base word.
+
+So, for example, in the following list:
+
+   access
+   accessible
+   accessories
+   accessorize
+   accessory
+
+We would recognize "accessory" as the root word (somehow), while ignoring "access" and "accessible"
+as not part of the "accessory" clump.  The idea is that we would remove only "accessories" from
+this run of words, being the plural (y --> ies) of "accessory".
+
+So, we have to build up clumps of words, then scan clump for roots and remove those words that
+match transformations from the root word.  Repeatedly, I guess.  
+
+-}
+
 import Data.List
+import GHC.IO.Handle (hPutStr)
+import GHC.IO.Handle.FD (stderr)
 
 -- | Filter a word list, removing those words that are duplicates apart from common suffixes.
 -- | Reads SORTED list on stdin, emits filtered list on stdout.
 main :: IO()
 main = do
   allInput <- getContents
-  putStrLn ("Got " ++ (show (myLength (lines allInput))) ++ " lines")
-  putStrLn ("Suffixes are:\n\t" ++ (concat (intersperse "\n\t" suffixes)))
-  putStrLn ("suffixes is a list of length " ++ (show (myLength suffixes)))
-  putStrLn ("Filtered list has " ++ (show (length (filterSuffixes (lines allInput)))) ++ " words.")
-  putStrLn "Words:"
+  hPutStr stderr ("Got " ++ (show (myLength (lines allInput))) ++ " lines\n")
+  hPutStr stderr ("Filtered list has " ++ (show (length (filterSuffixes (lines allInput)))) ++ " words.\n")
+  hPutStr stderr "Filtered words:\n"
   putStrLn (concat (intersperse "\n" (filterSuffixes (lines allInput))))
-  putStrLn "Done."
+  hPutStr stderr "Done.\n"
 
 -- | The common suffixes we will be removing
 suffixes :: [[Char]]
