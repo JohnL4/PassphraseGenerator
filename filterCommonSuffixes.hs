@@ -40,15 +40,6 @@ hasSuffix prefix word
   | isPrefix prefix word   = elem (drop (length prefix) word) suffixes
   | otherwise              = False
 
-{-
--- | Returns the common suffix that the given word appends to the given prefix or the empty string
-suffix :: [Char] -> [Char] -> [Char]
-suffix prefix word
-  | isPrefix prefix word   = elem (drop (length prefix) word) suffixes
-  | otherwise              = ""
--}
-
 -- | Returns true if the given prefix is actually a prefix of the given word
 isPrefix :: [Char] -> [Char] -> Bool
 isPrefix prefix word = (take (length prefix) word) == prefix
-
