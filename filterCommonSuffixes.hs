@@ -19,7 +19,6 @@ match transformations from the root word.  Repeatedly, I guess.
 
 -}
 
-import Data.List
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
 
@@ -28,32 +27,59 @@ import GHC.IO.Handle.FD (stderr)
 main :: IO()
 main = do
   allInput <- getContents
-  hPutStr stderr ("Got " ++ (show (myLength (lines allInput))) ++ " lines\n")
+  hPutStr stderr ("Got " ++ (show (length (lines allInput))) ++ " lines\n")
   hPutStr stderr ("Filtered list has " ++ (show (length (filterSuffixes (lines allInput)))) ++ " words.\n")
+{-
   hPutStr stderr "Filtered words:\n"
   putStrLn (concat (intersperse "\n" (filterSuffixes (lines allInput))))
+-}
   hPutStr stderr "Done.\n"
 
 -- | The common suffixes we will be removing
 suffixes :: [[Char]]
 suffixes = ["s","es","ed","ing","ly"] 
 
--- | Just a stupid length function to show that we can use pure functions on something bound with
--- | the "<-" operator.
-myLength :: [a] -> Integer
-myLength [] = 0
-myLength (_:xs) = 1 + (myLength xs)
-
 -- | The actual filter function. Removes words that are like prefix apart from common suffix.
 filterSuffixes :: [[Char]] -> [[Char]]
 filterSuffixes [] = []
 filterSuffixes [lastword] = [lastword]
-filterSuffixes (prefix : [lastword])
-  | (hasSuffix prefix lastword)  = [prefix]
-  | otherwise                    = prefix : [lastword]
-filterSuffixes (prefix : nextword : restwords)
-  | (hasSuffix prefix nextword)  = filterSuffixes (prefix : restwords)
-  | otherwise                    = prefix : (filterSuffixes (nextword : restwords))
+filterSuffixes (w : ws) = (filterSuffixesInCluster (cluster (w:ws)))
+                       ++ (filterSuffixes (drop (length (cluster (w:ws))) (w:ws)))
+
+-- | Returns a cluster of words sharing a common prefix from the next few words of the given list.
+cluster :: [[Char]] -> [[Char]]
+cluster [] = []
+cluster [w] = [w]
+cluster (w:ws)                  -- First word will be shortest, since (a) the input list is sorted,
+                                -- and (b) previous cluster would have broken off when prefix changed.
+  = w : clusterSharingPrefix w ws
+
+-- | Returns all words from the given list having the given word as a prefix.
+clusterSharingPrefix :: [Char] -> [[Char]] -> [[Char]]
+clusterSharingPrefix w [] = []
+clusterSharingPrefix w ws
+  | w == (take (length w) (head ws))   = (head ws) : clusterSharingPrefix w (tail ws)
+  | otherwise                          = []
+
+-- | Filters words from given cluster known to have a common prefix having a known transformation
+-- | from one of the words in the cluster.
+filterSuffixesInCluster :: [[Char]] -> [[Char]]
+filterSuffixesInCluster [] = []
+filterSuffixesInCluster [word] = [word]
+filterSuffixesInCluster ws
+  -- Need to build a dictionary? No, suffixes should already be a dictionary.
+  -- 
+  -- Need to find, for each transformation rule in the dictionary, a match in the cluster, and
+  -- eliminate the transformed word of the pair.
+  = let tps = transformationPairs ws
+    in ws
+
+-- | Returns recognized pairs of words from the given word cluster, in which each pair consists of
+-- | two words from the cluster, the first of which can be transformed to the second of which via
+-- | one of the transformation rules defined in suffixes.
+transformationPairs :: [[Char]] -> [([Char],[Char])]
+transformationPairs ws = []
+
 
 -- | Returns true if the given word appends one of the common suffixes to the given prefix.
 hasSuffix :: [Char] -> [Char] -> Bool
