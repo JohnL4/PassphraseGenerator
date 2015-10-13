@@ -18,4 +18,5 @@ At end of input, sort dictionary entries by match-counts (descending) and take f
 
 -}
   allInput <- getContents
+  -- putStrLn concat 
   hPutStr stderr "Done.\n"
