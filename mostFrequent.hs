@@ -3,6 +3,20 @@
 
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
+import Data.List (intersperse, sortBy)
+import qualified Data.Map.Strict as Map
+import Data.List.Split (splitOn)
+
+{-
+Test data:
+let filetext = "aaa\t1900\t2\naaa\t1950\t3\nbbb\t1950\t5\nbbb_VERB\t1980\t9"
+-}
+
+n :: Int
+n = 15000
+
+y :: Int
+y = 1950
 
 main :: IO()
 main = do
@@ -15,8 +29,30 @@ If year >= y:
    Split on "_", discard expected known fragments, complain if there are more than one fragments left.
    Find word in dictionary and add match-count to that entry.
 At end of input, sort dictionary entries by match-counts (descending) and take first n entries for output.
-
 -}
   allInput <- getContents
-  -- putStrLn concat 
+  putStrLn (concat (intersperse "\n" (map fst (take n (sortBy countDescending
+                                                       (Map.toList (wordCounts y (lines allInput) Map.empty)))))))
   hPutStr stderr "Done.\n"
+
+-- | Orders inputs by 2nd element (count), descending
+countDescending :: ([Char],Int) -> ([Char],Int) -> Ordering
+countDescending (_, countA) (_, countB)
+  | countA < countB  = GT
+  | countA == countB = EQ
+  | otherwise        = LT  
+
+-- | Returns map of all counts (summed) for words occurring on or after given year.
+wordCounts :: Int               -- ^ Year
+           -> [[Char]]          -- ^ Lines in form "word\tyear\tcount\totherStuffWeDontCareAbout"
+           -> Map.Map [Char] Int -- ^ Input map
+           -> Map.Map [Char] Int -- ^ Output map
+wordCounts _ [] aMap = aMap
+wordCounts aYear (aLine:restLines) aMap =
+  let ngram       = (splitOn "_" ((splitOn "\t" aLine)!!0))!!0 -- "ngram" is the same as "word", in this case
+      year        = read ((splitOn "\t" aLine)!!1) :: Int
+      matchCount  = read ((splitOn "\t" aLine)!!2) :: Int
+  in if (year < aYear)
+     then (wordCounts aYear restLines aMap)
+     else (wordCounts aYear restLines (Map.insertWith (+) ngram matchCount aMap))
+

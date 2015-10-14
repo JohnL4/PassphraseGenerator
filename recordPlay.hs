@@ -2,6 +2,8 @@
 Playing around with records.
 -}
 
+import Data.List (intersperse)
+
 main :: IO()
 main = do
   dumpThings [Thing { name = "Alice", size = 12}, Thing { name = "Bob", size=33}]
@@ -13,8 +15,6 @@ data Thing = Thing { name :: String,
               deriving( Show)
 
 dumpThings :: (Show a) => [a] -> IO()
-dumpThings [things] = do
-  putStrLn "Things:"
-  actions <- map putStrLn things
-  putStrLn $ (show (length actions)) ++ " actions."
+dumpThings things = do
+  putStrLn ("Things:\n\t" ++ (concat (intersperse "\n\t" (map show things))))
 
