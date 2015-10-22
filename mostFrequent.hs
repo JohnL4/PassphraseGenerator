@@ -1,10 +1,12 @@
 -- | Reads stdin and prints the n most-frequent words occurring after year y to stdout, along with
 -- | their counts.
 
+{-# LANGUAGE BangPatterns #-}
+
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
 import Data.List (intersperse, sortBy)
-import qualified Data.Map as Map
+import qualified Data.Map.Strict as Map
 import Data.List.Split (splitOn)
 
 {-
@@ -36,7 +38,7 @@ At end of input, sort dictionary entries by match-counts (descending) and take f
   hPutStr stderr "Done.\n"
 
 -- | Orders inputs by 2nd element (count), descending
-countDescending :: ([Char],Int) -> ([Char],Int) -> Ordering
+countDescending :: (String,Int) -> (String,Int) -> Ordering
 countDescending (_, countA) (_, countB)
   | countA < countB  = GT
   | countA == countB = EQ
@@ -44,16 +46,29 @@ countDescending (_, countA) (_, countB)
 
 -- | Returns map of all counts (summed) for words occurring on or after given year.
 wordCounts :: Int               -- ^ Year
-           -> [[Char]]          -- ^ Lines in form "word\tyear\tcount\totherStuffWeDontCareAbout"
-           -> Map.Map [Char] Int -- ^ Input map
-           -> Map.Map [Char] Int -- ^ Output map
+           -> [String]          -- ^ Lines in form "word\tyear\tcount\totherStuffWeDontCareAbout"
+           -> Map.Map String Int -- ^ Input map
+           -> Map.Map String Int -- ^ Output map
 wordCounts _ [] aMap = aMap
-wordCounts aYear (aLine:restLines) aMap =
+wordCounts aYear (aLine:restLines) !aMap =
   let fields      = splitOn "\t" aLine
       ngram       = (splitOn "_" (fields!!0))!!0 -- "ngram" is the same as "word", in this case
       year        = read (fields!!1) :: Int
       matchCount  = read (fields!!2) :: Int
   in if (year < aYear)
      then (wordCounts aYear restLines aMap)
-     else (wordCounts aYear restLines (Map.insertWith (+) ngram matchCount aMap))
+     else (wordCounts aYear restLines
+           -- aMap
+           -- (updateMap ngram matchCount aMap)
+           (Map.insertWith (+) ngram matchCount aMap)
+           )
 
+{-
+-- | Update the given map with the given key and value.  If the key already exists in the map, add
+-- | the given value to the value stored in the map.  If the key does not exist in the map, insert
+-- | it.
+updateMap :: String -> Int -> Map.Map String Int -> Map.Map String Int
+updateMap !anNgram !aMatchCount !aMap 
+  | Map.member anNgram aMap   = Map.insert anNgram (aMatchCount + (aMap Map.! anNgram)) aMap
+  | otherwise                 = Map.insert anNgram aMatchCount aMap
+-}

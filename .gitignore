@@ -2,6 +2,11 @@
 *.hi
 *.o
 *.html
+*.aux
+*.hp
+*.pdf
+*.prof
+*.ps
 filterCommonSuffixes
 mostFrequent
 filtered-words.txt
