@@ -58,17 +58,6 @@ wordCounts aYear (aLine:restLines) !aMap =
   in if (year < aYear)
      then (wordCounts aYear restLines aMap)
      else (wordCounts aYear restLines
-           -- aMap
-           -- (updateMap ngram matchCount aMap)
            (Map.insertWith (+) ngram matchCount aMap)
+           -- aMap
            )
-
-{-
--- | Update the given map with the given key and value.  If the key already exists in the map, add
--- | the given value to the value stored in the map.  If the key does not exist in the map, insert
--- | it.
-updateMap :: String -> Int -> Map.Map String Int -> Map.Map String Int
-updateMap !anNgram !aMatchCount !aMap 
-  | Map.member anNgram aMap   = Map.insert anNgram (aMatchCount + (aMap Map.! anNgram)) aMap
-  | otherwise                 = Map.insert anNgram aMatchCount aMap
--}
