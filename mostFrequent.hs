@@ -5,6 +5,7 @@
 
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
+import Data.Char (toLower)
 import Data.List (intersperse, sortBy)
 import qualified Data.Map.Strict as Map
 import Data.List.Split (splitOn)
@@ -59,7 +60,7 @@ wordCounts _ [] aMap = aMap
 wordCounts aYear (aLine:restLines) !aMap =
   let fields      = splitOn "\t" aLine
       ngramParts  = splitOn "_" (fields!!0)
-      ngram       = ngramParts!!0 -- "ngram" is the same as "word", in this case.
+      ngram       = map toLower (ngramParts!!0) -- "ngram" is the same as "word", in this case.
       year        = read (fields!!1) :: Int
       matchCount  = read (fields!!2) :: Int
   in if (year < aYear)
