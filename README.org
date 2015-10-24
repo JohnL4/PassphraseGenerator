@@ -1,0 +1,3 @@
+* PassphraseGenerator
+Generates passphrases from a list of basic English words at least 8192 words in length.
+
