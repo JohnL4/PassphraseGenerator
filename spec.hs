@@ -6,7 +6,7 @@ import qualified Data.Map.Strict as Map
 import PassphraseGenerator
 
 filetext :: String
-filetext = "aaa\t1900\t2\naaa\t1950\t3\nbbb\t1950\t5\nbbb_VERB\t1980\t9"
+filetext = "aaa\t1900\t2\naaa\t1950\t3\nAAA\t1951\t7\nbbb\t1950\t5\nbbb_VERB\t1980\t9"
 
 y :: Int
 y = 1950
@@ -22,7 +22,7 @@ main = hspec $ do
       (countDescending ("aaa", 6) ("bbb", 6)) `shouldBe` EQ
 
   describe "wordCounts" $ do
-    it "aaa should occur 3 times" $ do
-      (Map.lookup "aaa" (wordCounts y (lines filetext) Map.empty)) `shouldBe` (Just 3)
+    it "aaa should occur 10 times" $ do
+      (Map.lookup "aaa" (wordCounts y (lines filetext) Map.empty)) `shouldBe` (Just 10)
     it "bbb should occur 14 times" $ do
       (Map.lookup "bbb" (wordCounts y (lines filetext) Map.empty)) `shouldBe` (Just 14)
