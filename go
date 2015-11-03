@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -eu
 set -x
 
 # cat googlebooks-eng-us-all-1gram-20120701-a | ./filterSpecialCharacters.awk | head -1000000 > googlebooks-eng-us-all-1gram-20120701-a-filtered-1000000
