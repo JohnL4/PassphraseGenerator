@@ -3,7 +3,7 @@
 set -eu
 set -x
 
-# cat googlebooks-eng-us-all-1gram-20120701-a | ./filterSpecialCharacters.awk | head -1000000 > googlebooks-eng-us-all-1gram-20120701-a-filtered-1000000
+# cat googlebooks-eng-us-all-1gram-20120701-a | ./filterSpecialCharacters.awk | head -100000 > googlebooks-eng-us-all-1gram-20120701-a-filtered-100000
 
 ghc -fforce-recomp -prof -fprof-auto -fprof-cafs mostFrequent.hs
 
@@ -11,7 +11,7 @@ ghc -fforce-recomp -prof -fprof-auto -fprof-cafs mostFrequent.hs
 # -hd is "data constructors"
 # -hy is "types"
 
-cat googlebooks-eng-us-all-1gram-20120701-a-filtered-1000000 \
+cat googlebooks-eng-us-all-1gram-20120701-a-filtered-100000 \
       | ./mostFrequent +RTS -p -hr >/dev/null \
     && hp2ps -c mostFrequent.hp \
     && ps2pdf mostFrequent.ps

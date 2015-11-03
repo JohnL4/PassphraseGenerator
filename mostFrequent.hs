@@ -5,6 +5,7 @@
 
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
+import Data.Char (toLower)
 import Data.List (intersperse, sortBy)
 import qualified Data.Map.Strict as Map
 import Data.List.Split (splitOn)
@@ -14,9 +15,11 @@ Test data:
 let filetext = "aaa\t1900\t2\naaa\t1950\t3\nbbb\t1950\t5\nbbb_VERB\t1980\t9"
 -}
 
+-- | Number of most-frequent words we want.
 n :: Int
 n = 15000
 
+-- | Earliest year we want to count while building frequency table
 y :: Int
 y = 1950
 
@@ -28,7 +31,11 @@ If year >= y:
    Trim parts of speech (POS) from 1-gram (leading, trailing known fragments delimited by "_")
       Known fragments: NOUN, VERB, ADJ, ADV, PRON (pronouns), DET (determiners and articles), ADP
       (prepositions, postpositions), NUM, CONJ, PRT (particles), X (miscellaneous)
-   Split on "_", discard expected known fragments, complain if there are more than one fragments left.
+
+   Split on "_", discard expected known fragments, complain if there are more than one fragments left.  (Note that I
+   have verified that each ngram has 0 or 1 trailing attributes, so the check for an unexpected number of parts
+   is unnecessary.)
+
    Find word in dictionary and add match-count to that entry.
 At end of input, sort dictionary entries by match-counts (descending) and take first n entries for output.
 -}
@@ -52,23 +59,13 @@ wordCounts :: Int               -- ^ Year
 wordCounts _ [] aMap = aMap
 wordCounts aYear (aLine:restLines) !aMap =
   let fields      = splitOn "\t" aLine
-      ngram       = (splitOn "_" (fields!!0))!!0 -- "ngram" is the same as "word", in this case
+      ngramParts  = splitOn "_" (fields!!0)
+      ngram       = map toLower (ngramParts!!0) -- "ngram" is the same as "word", in this case.
       year        = read (fields!!1) :: Int
       matchCount  = read (fields!!2) :: Int
   in if (year < aYear)
      then (wordCounts aYear restLines aMap)
      else (wordCounts aYear restLines
-           -- aMap
-           -- (updateMap ngram matchCount aMap)
            (Map.insertWith (+) ngram matchCount aMap)
+           -- aMap
            )
-
-{-
--- | Update the given map with the given key and value.  If the key already exists in the map, add
--- | the given value to the value stored in the map.  If the key does not exist in the map, insert
--- | it.
-updateMap :: String -> Int -> Map.Map String Int -> Map.Map String Int
-updateMap !anNgram !aMatchCount !aMap 
-  | Map.member anNgram aMap   = Map.insert anNgram (aMatchCount + (aMap Map.! anNgram)) aMap
-  | otherwise                 = Map.insert anNgram aMatchCount aMap
--}

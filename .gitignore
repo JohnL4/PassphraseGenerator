@@ -7,6 +7,7 @@
 *.pdf
 *.prof
 *.ps
+*.exe
 filterCommonSuffixes
 mostFrequent
 filtered-words.txt
