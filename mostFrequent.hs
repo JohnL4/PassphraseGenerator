@@ -5,10 +5,10 @@
 
 import GHC.IO.Handle (hPutStr)
 import GHC.IO.Handle.FD (stderr)
-import Data.Char (toLower)
 import Data.List (intersperse, sortBy)
 import qualified Data.Map.Strict as Map
-import Data.List.Split (splitOn)
+
+import PassphraseGenerator
 
 {-
 Test data:
@@ -44,6 +44,7 @@ At end of input, sort dictionary entries by match-counts (descending) and take f
                                                        (Map.toList (wordCounts y (lines allInput) Map.empty)))))))
   hPutStr stderr "Done.\n"
 
+{-
 -- | Orders inputs by 2nd element (count), descending
 countDescending :: (String,Int) -> (String,Int) -> Ordering
 countDescending (_, countA) (_, countB)
@@ -69,3 +70,4 @@ wordCounts aYear (aLine:restLines) !aMap =
            (Map.insertWith (+) ngram matchCount aMap)
            -- aMap
            )
+-}
