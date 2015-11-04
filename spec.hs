@@ -1,6 +1,7 @@
 -- | Unit test for PassphraseGenerator functions.
 
 import Test.Hspec
+import Data.List (sortBy)
 import qualified Data.Map.Strict as Map
 
 import PassphraseGenerator
@@ -10,6 +11,9 @@ filetext = "aaa\t1900\t2\naaa\t1950\t3\nAAA\t1951\t7\nbbb\t1950\t5\nbbb_VERB\t19
 
 y :: Int
 y = 1950
+
+n :: Int
+n = 15000
 
 main :: IO()
 main = hspec $ do
@@ -26,3 +30,9 @@ main = hspec $ do
       (Map.lookup "aaa" (wordCounts y (lines filetext) Map.empty)) `shouldBe` (Just 10)
     it "bbb should occur 14 times" $ do
       (Map.lookup "bbb" (wordCounts y (lines filetext) Map.empty)) `shouldBe` (Just 14)
+
+  describe "main" $ do
+    it "should return the list of most-frequent words in the right order" $ do
+      (map fst (take n (sortBy countDescending
+                        (Map.toList (wordCounts y (lines filetext) Map.empty)))))
+        `shouldBe` ["bbb", "aaa"]
