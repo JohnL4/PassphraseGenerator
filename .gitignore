@@ -10,5 +10,6 @@
 *.exe
 filterCommonSuffixes
 mostFrequent
+spec
 filtered-words.txt
 googlebooks-eng-us-all-1gram-20120701-*

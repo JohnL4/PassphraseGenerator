@@ -25,9 +25,12 @@ wordCounts aYear (aLine:restLines) !aMap =
   let fields      = splitOn "\t" aLine
       ngramParts  = splitOn "_" (fields!!0)
       ngram       = map toLower (ngramParts!!0) -- "ngram" is the same as "word", in this case.
+      ngramRole   = if (length ngramParts > 1)
+                    then ngramParts!!1
+                    else ""
       year        = read (fields!!1) :: Int
       matchCount  = read (fields!!2) :: Int
-  in if (year < aYear)
+  in if (year < aYear) || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
      then (wordCounts aYear restLines aMap)
      else (wordCounts aYear restLines
            (Map.insertWith (+) ngram matchCount aMap)

@@ -40,6 +40,7 @@ If year >= y:
 At end of input, sort dictionary entries by match-counts (descending) and take first n entries for output.
 -}
   allInput <- getContents
-  putStrLn (concat (intersperse "\n" (map fst (take n (sortBy countDescending
-                                                       (Map.toList (wordCounts y (lines allInput) Map.empty)))))))
+  putStrLn (concat (intersperse "\n" (map (\(word, count) -> word ++ "\t" ++ (show count))
+                                      (take n (sortBy countDescending
+                                               (Map.toList (wordCounts y (lines allInput) Map.empty)))))))
   hPutStr stderr "Done.\n"
