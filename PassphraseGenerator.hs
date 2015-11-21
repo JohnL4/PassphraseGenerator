@@ -7,6 +7,10 @@ module PassphraseGenerator where
 import Data.Char (toLower)
 import qualified Data.Map.Strict as Map
 import Data.List.Split (splitOn)
+import Text.Regex.TDFA
+
+romanNumeral :: Regex
+romanNumeral = makeRegexOpts defaultCompOpt{multiline=False} defaultExecOpt "^[ivxlc]+$"
 
 -- | Orders inputs by 2nd element (count), descending
 countDescending :: (String,Int) -> (String,Int) -> Ordering
@@ -22,18 +26,22 @@ wordCounts :: Int               -- ^ Year
            -> Map.Map String Int -- ^ Output map
 wordCounts _ [] aMap = aMap
 wordCounts aYear (aLine:restLines) !aMap =
-  let fields      = splitOn "\t" aLine
-      ngramParts  = splitOn "_" (fields!!0)
-      ngram       = map toLower (ngramParts!!0) -- "ngram" is the same as "word", in this case.
-      ngramRole   = if (length ngramParts > 1)
-                    then ngramParts!!1
-                    else ""
-      year        = read (fields!!1) :: Int
-      matchCount  = read (fields!!2) :: Int
-  in if (year < aYear) || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
+  let fields          = splitOn "\t" aLine
+      ngramParts      = splitOn "_" (fields!!0)
+      ngram           = map toLower (ngramParts!!0) -- "ngram" is the same as "word", in this case.
+      ngramRole       = if (length ngramParts > 1)
+                        then ngramParts!!1
+                        else ""
+      year            = read (fields!!1) :: Int
+      ngramMatchCount = read (fields!!2) :: Int
+  in if (year < aYear)
+        || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
+        || ((length ngram) < 3)  -- Two-letter words
+        || (match romanNumeral ngram) -- Also need to eliminate Roman numerals: [ivxlc]+ (not using
+                                      -- "m" because "mix" is a real word)
      then (wordCounts aYear restLines aMap)
      else (wordCounts aYear restLines
-           (Map.insertWith (+) ngram matchCount aMap)
+           (Map.insertWith (+) ngram ngramMatchCount aMap)
            -- aMap
            )
 

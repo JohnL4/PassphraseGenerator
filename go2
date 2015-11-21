@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for letter in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+    echo -e "\tProcessing ${letter}"
+    gunzip -c googlebooks-eng-us-all-1gram-20120701-${letter}.gz \
+        | ./filterSpecialCharacters.awk \
+        | ./mostFrequent \
+        >| googlebooks-eng-us-all-1gram-20120701-${letter}-filtered-mostFrequent
+done
+gxmessage -bg cyan -center -wrap -ontop "mostFrequent a-z done" &
