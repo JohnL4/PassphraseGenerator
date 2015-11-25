@@ -9,6 +9,11 @@ import qualified Data.Map.Strict as Map
 import Data.List.Split (splitOn)
 import Text.Regex.TDFA
 
+-- | The parts of speech (POS) we want to restrict our counting to.  We use "" to also pick up those
+-- | ngrams that haven't been tagged with POS at all.
+significantNgramRoles :: [String]
+significantNgramRoles = ["", "NOUN","VERB","ADJ","ADV"]
+
 romanNumeral :: Regex
 romanNumeral = makeRegexOpts defaultCompOpt{multiline=False} defaultExecOpt "^[ivxlc]+$"
 
@@ -35,7 +40,8 @@ wordCounts aYear (aLine:restLines) !aMap =
       year            = read (fields!!1) :: Int
       ngramMatchCount = read (fields!!2) :: Int
   in if (year < aYear)
-        || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
+        -- || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
+        || (not (elem ngramRole significantNgramRoles))
         || ((length ngram) < 3)  -- Two-letter words
         || (match romanNumeral ngram) -- Also need to eliminate Roman numerals: [ivxlc]+ (not using
                                       -- "m" because "mix" is a real word)

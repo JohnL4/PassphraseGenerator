@@ -30,7 +30,7 @@ Read line, split on tabs, take first three fields, which are: 1-gram (word), yea
 If year >= y:
    Trim parts of speech (POS) from 1-gram (leading, trailing known fragments delimited by "_")
       Known fragments: NOUN, VERB, ADJ, ADV, PRON (pronouns), DET (determiners and articles), ADP
-      (prepositions, postpositions), NUM, CONJ, PRT (particles), X (miscellaneous)
+      (prepositions, postpositions), NUM (numbers), CONJ, PRT (particles), X (miscellaneous)
 
    Split on "_", discard expected known fragments, complain if there are more than one fragments left.  (Note that I
    have verified that each ngram has 0 or 1 trailing attributes, so the check for an unexpected number of parts
