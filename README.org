@@ -17,14 +17,23 @@
    - mostFrequent.hs :: Find the n most frequent words occurring on or after year y in a Google
         ngrams raw data file, in the 2012 format.
 
+   - PassphraseGenerator.hs :: The guts of the program, so I can write a separate unit-test suite.
+
+   - spec.hs :: Unit test.
+
    - filterSpecialCharacters.awk :: Awk program to filter out words with non-ASCII characters.  We
         only speak Murrican here.
 
    - go :: A bash script that encapsulates the commands to build this thing for profiling, prepare
            the data, and actually run it (and get profiling output).
+
+   - go2 :: Bash script to run =mostFrequent= over all the google raw ngram data files.  This is the
+            "Big Run" to produce final output.
            
    - filterCommonSuffixes.hs :: Program to read a list of words and filter out those that are just
         another word in the list with a common suffix added on (e.g., to pluralize it).  This was
         the first program I wrote, but =mostFrequent= is where I've spent most of my effort
-        recently (as of 24 Oct 2015).
+        recently (as of 24 Oct 2015).  I've been having second thoughts about whether I wanted to
+        actually run this or not, since I don't think words that are "almost duplicates" reduces
+        entropy, really.
 
