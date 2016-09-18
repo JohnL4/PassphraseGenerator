@@ -16,7 +16,7 @@ significantNgramRoles :: Set String -- Balanced binary tree; more efficient than
 significantNgramRoles = fromList ["NOUN","VERB","ADJ","ADV"]
 
 romanNumeral :: Regex
-romanNumeral = makeRegexOpts defaultCompOpt{multiline=False} defaultExecOpt "^[ivxlc]+$"
+romanNumeral = makeRegexOpts defaultCompOpt{multiline=False} defaultExecOpt "^[ivxlcm]+$"
 
 -- | Orders inputs by 2nd element (count), descending
 countDescending :: (String,Int) -> (String,Int) -> Ordering
@@ -42,10 +42,9 @@ wordCounts aYear (aLine:restLines) !aMap =
       ngramMatchCount = read (fields!!2) :: Int
   in if (year < aYear)
         -- || (ngramRole == "DET") -- Skip "determiners" (words like "a", "an", "the")
-        || ((length ngram) < 3)  -- Two-letter words
+        || ((length ngram) < 4)  -- Words shorter than this many characters. Can add 3-letter words manually later.
         || (not (member ngramRole significantNgramRoles))
-        || (match romanNumeral ngram) -- Also need to eliminate Roman numerals: [ivxlc]+ (not using
-                                      -- "m" because "mix" is a real word)
+        || (match romanNumeral ngram)
      then (wordCounts aYear restLines aMap)
      else (wordCounts aYear restLines
            (Map.insertWith (+) ngram ngramMatchCount aMap)

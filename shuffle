@@ -1,0 +1,12 @@
+#!/bin/bash
+
+NUM_WORDS_PER_LINE=3
+NUM_LINES=10
+WORDS_FILE="mostFreq-a-z-first-33000.txt"
+SHUF=gshuf
+
+for (( i=0; $i < $NUM_LINES; i++)); do
+    # echo -n "$i:  "
+    echo `$SHUF -n $NUM_WORDS_PER_LINE $WORDS_FILE | awk '{print $1}'`
+done
+
