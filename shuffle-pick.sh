@@ -4,6 +4,12 @@
 #
 # Picks <m> lines of <n> random words each from googlebooks-eng-us-all-1gram-20120701-all-mostFrequent-17bits
 
+nWords=3                        # default
+nLines=10                       # default
+
+WORDS_FILE="mostFreq-a-z-first-33000.txt"
+SHUF=shuf
+
 while getopts "l:w:" opt; do
     case $opt in
         l) nLines=$OPTARG
@@ -15,6 +21,6 @@ done
 
 i=$nLines
 while [ $i -gt 0 ]; do
-    echo `shuf -n $nWords googlebooks-eng-us-all-1gram-20120701-all-mostFrequent-17bits | awk '{print $1}'`
+    echo `$SHUF -n $nWords $WORDS_FILE | awk '{print $1}'`
     i=`expr $i - 1`
 done
