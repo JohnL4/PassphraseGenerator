@@ -15,7 +15,14 @@ nWords=3                        # default
 nLines=10                       # default
 
 WORDS_FILE="mostFreq-a-z-first-33000.txt"
-SHUF=shuf
+if shuf </dev/null >/dev/null 2>&1; then
+   SHUF=shuf
+elif gshuf </dev/null >/dev/null 2>&1; then
+   SHUF=gshuf
+else
+    echo "${me}: Can't find 'shuf' or equivalent" >&2
+    exit 1
+fi
 
 while getopts "l:w:" opt; do
     case $opt in
@@ -26,7 +33,7 @@ while getopts "l:w:" opt; do
     esac
 done
 
-if [ "${l:-}" = "" -o "${w:-}" = "" ]; then
+if [ "${nLines:-}" = "" -o "${nWords:-}" = "" ]; then
    help
    exit 1
 fi
@@ -36,3 +43,5 @@ while [ $i -gt 0 ]; do
     echo `$SHUF -n $nWords $WORDS_FILE | awk '{print $1}'`
     i=`expr $i - 1`
 done
+
+exit 0
