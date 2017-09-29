@@ -3,7 +3,7 @@
 help()
 {
     cat << EOF
-Usage: $me -w <n> -l <m>
+Usage: $me [-h] [-w <n>] [-l <m>]
 
 Picks <m> lines of <n> random words each from googlebooks-eng-us-all-1gram-20120701-all-mostFrequent-17bits
 EOF
@@ -24,8 +24,11 @@ else
     exit 1
 fi
 
-while getopts "l:w:" opt; do
+needHelp=false
+while getopts "hl:w:" opt; do
     case $opt in
+        h) needHelp=true
+           ;;
         l) nLines=$OPTARG
             ;;
         w) nWords=$OPTARG
@@ -33,7 +36,7 @@ while getopts "l:w:" opt; do
     esac
 done
 
-if [ "${nLines:-}" = "" -o "${nWords:-}" = "" ]; then
+if $needHelp || [ "${nLines:-}" = "" -o "${nWords:-}" = "" ]; then
    help
    exit 1
 fi
