@@ -60,3 +60,5 @@
        actually run this or not, since I don't think words that are "almost duplicates" reduces
        entropy, really.
 
+  - raw data :: The raw data is at http://storage.googleapis.com/books/ngrams/books/datasetsv2.html, under section
+                "American English" (version 20120701, 1-grams).
