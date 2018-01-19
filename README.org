@@ -11,6 +11,9 @@
    Once you've processed all the input raw data into a list of most-frequently-occurring words, this is the script
    you'll use most often to generate password possibilities.
 
+   (Note: It might be possible to run this script via Windows Subsystem for Linux,
+   https://docs.microsoft.com/en-us/windows/wsl/about.  Untested at this time.)
+
    Sample run:
 
    #+BEGIN_EXAMPLE
