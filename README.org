@@ -10,6 +10,22 @@
 
    Once you've processed all the input raw data into a list of most-frequently-occurring words, this is the script
    you'll use most often to generate password possibilities.
+
+   Sample run:
+
+   #+BEGIN_EXAMPLE
+     J1231-W10$ ./shuffle-pick.sh
+     underneath jazz obstructed
+     undoing gompers adjudication
+     preschoolers tagging hartmann
+     precede planner lucretius
+     czar morse avoid
+     stalks whitehead premenstrual
+     bremen trench essentials
+     mesozoic homestead hues
+     aztecs leech lubricant
+     retrieval strained suppression
+   #+END_EXAMPLE 
    
 ** ~mostFrequent~
     
