@@ -14,7 +14,7 @@ me=`basename $0`
 nWords=3                        # default
 nLines=10                       # default
 
-WORDS_FILE="mostFreq-a-z-first-33000.txt"
+WORDS_FILE="mostFreq-a-z-first-8192.txt"
 
 if shuf </dev/null >/dev/null 2>&1; then
    SHUF=shuf
